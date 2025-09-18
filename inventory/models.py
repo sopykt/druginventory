@@ -1,11 +1,12 @@
 from django.db import models
 from django.utils import timezone
+from datetime import timedelta
 
 class Medicine(models.Model):
     """
     Represents a medicine in the inventory.
     """
-    # Choices for fields to ensure data consistency
+    # (Choices fields remain the same...)
     ADMINISTRATION_TYPE_CHOICES = [
         ('oral', 'Oral'),
         ('inj', 'Injection'),
@@ -59,7 +60,6 @@ class Medicine(models.Model):
         help_text="Any additional notes or remarks."
     )
     
-    # Auto-managed timestamp fields
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -75,3 +75,15 @@ class Medicine(models.Model):
     def is_expired(self):
         """Returns True if the medicine's expiration date is in the past."""
         return self.expiration_date < timezone.now().date()
+    
+    @property
+    def is_near_expiry(self):
+        """
+        Returns True if the medicine is not expired and will expire within the next 90 days.
+        """
+        if self.is_expired:
+            return False
+        today = timezone.now().date()
+        ninety_days_from_now = today + timedelta(days=90)
+        return self.expiration_date <= ninety_days_from_now
+
