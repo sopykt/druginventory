@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine Inventory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* A little extra style for better readability */
+        body { font-family: 'Inter', sans-serif; }
+        @import url('https://rsms.me/inter/inter.css');
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="p-6 border-b border-gray-200">
+                <h1 class="text-2xl font-bold text-gray-700">Medicine Inventory</h1>
+                <p class="text-gray-500 mt-1">A complete list of available stock.</p>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Composition</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Exp. Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for medicine in medicines %}
+                        <tr class="hover:bg-gray-50 {% if medicine.is_expired %}bg-red-100 text-red-800{% endif %}">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ medicine.name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ medicine.composition }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ medicine.category }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                    {{ medicine.get_count_type_display }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-semibold text-gray-800">{{ medicine.quantity }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm {% if medicine.is_expired %}font-bold{% else %}text-gray-600{% endif %}">{{ medicine.expiration_date|date:"Y-m-d" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                                No medicines found in the inventory.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- You can add pagination controls here if you have many items -->
+        </div>
+    </div>
+
+</body>
+</html>
