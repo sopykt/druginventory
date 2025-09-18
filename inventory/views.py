@@ -1,5 +1,5 @@
 from django.views.generic import ListView
-from django.db.models import Q
+from django.db.models import Q, F
 from datetime import date, timedelta
 from .models import Medicine
 
@@ -37,6 +37,9 @@ class MedicineListView(ListView):
             queryset = queryset.filter(expiration_date__lt=today)
         elif filter_by == 'out_of_stock':
             queryset = queryset.filter(quantity=0)
+        elif filter_by == 'low_stock':
+            # Filter where quantity is less than or equal to the threshold field
+            queryset = queryset.filter(quantity__lte=F('low_stock_threshold'))
 
         # 2. Searching Logic
         if query:

@@ -4,7 +4,7 @@ from datetime import timedelta
 
 class Medicine(models.Model):
     """
-    Represents a medicine in the inventory.
+    Represents a medicine in the inventory, now with low stock tracking.
     """
     # (Choices fields remain the same...)
     ADMINISTRATION_TYPE_CHOICES = [
@@ -51,6 +51,11 @@ class Medicine(models.Model):
         default=0,
         help_text="The total quantity currently in stock."
     )
+    # New field for low stock threshold
+    low_stock_threshold = models.PositiveIntegerField(
+        default=10,
+        help_text="Set a number to get a low stock warning when quantity falls to or below this."
+    )
     expiration_date = models.DateField(
         help_text="The expiration date of the medicine batch."
     )
@@ -86,4 +91,11 @@ class Medicine(models.Model):
         today = timezone.now().date()
         ninety_days_from_now = today + timedelta(days=90)
         return self.expiration_date <= ninety_days_from_now
+    
+    @property
+    def is_low_stock(self):
+        """Returns True if the quantity is at or below the threshold."""
+        if self.quantity <= self.low_stock_threshold:
+            return True
+        return False
 
